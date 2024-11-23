@@ -43,7 +43,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </svelte:head>
 
-<h1 class="title">World of Chess</h1>
+<h1 class="title">World Chess Ranking</h1>
 
 <!-- Overlay -->
 <Overlay {overlayVisible} />
@@ -128,7 +128,7 @@
   border-radius: 50%; /* Maakt de button een perfecte cirkel */
   cursor: pointer;
   transition: background-color 0.3s ease;
-  z-index: 100; /* Zorg ervoor dat de button altijd boven de andere content ligt */
+  z-index: 10; /* Zorg ervoor dat de button altijd boven de andere content ligt */
   display: flex;
   justify-content: center;
   align-items: center; /* Zorgt ervoor dat de inhoud van de button gecentreerd is */
