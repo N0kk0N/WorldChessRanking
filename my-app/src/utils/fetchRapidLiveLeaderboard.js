@@ -36,10 +36,10 @@ export async function fetchLeaderboardData() {
     const response = await fetch('https://api.chess.com/pub/leaderboards');
     const data = await response.json();
 
-    // Gebruik 'daily960' in plaats van 'daily'
-    if (data.daily960) {
+    // Gebruik 'live_rapid' in plaats van 'daily960'
+    if (data.live_rapid) {
         leaderboards = await Promise.all(
-            data.daily960.slice(0, 50).map(async (player) => {
+            data.live_rapid.slice(0, 50).map(async (player) => {
                 const countryName = player.country
                     ? await fetchCountryName(player.country)
                     : ''; // Zet het op een lege string als onbekend
