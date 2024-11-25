@@ -5,21 +5,22 @@
   import ToggleLeaderboard from "../components/toggleLeaderboard.svelte";
   import { writable } from 'svelte/store'; // Importeer writable
 
+  // Dataset en statusvariabelen
   let dataset = [];
   let isTotalScore = false; // Variabele om tussen criteria te wisselen
   let showLeaderboard = false; // Variabele om het leaderboard te tonen/verbergen
 
-  // Maak de overlay store
+  // Overlay zichtbaarheidsstatus als store
   let overlayVisible = writable(true);
 
   // Functie om de scorecriteria te wisselen
   function toggleScore() {
-    isTotalScore = !isTotalScore;
+    isTotalScore = !isTotalScore; // Wissel tussen totaal- en gemiddelde score
   }
 
   // Functie om het leaderboard te toggelen
   function toggleLeaderboard() {
-    showLeaderboard = !showLeaderboard;
+    showLeaderboard = !showLeaderboard; // Wissel de zichtbaarheid van het leaderboard
   }
 
   // Functie om de overlay opnieuw te openen
@@ -30,7 +31,7 @@
   // Data ophalen voor de kaart
   json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
     .then((data) => {
-      dataset = data.features;
+      dataset = data.features; // Laad de GeoJSON-data
     })
     .catch((error) => {
       console.error("Error loading data:", error);
@@ -72,7 +73,9 @@
 <Map {dataset} {isTotalScore} />
 
 <!-- Leaderboard -->
-<ToggleLeaderboard {showLeaderboard} {toggleLeaderboard} />
+{#if showLeaderboard}
+  <ToggleLeaderboard {isTotalScore} />
+{/if}
 
 <style>
   :global(body) {
@@ -116,28 +119,26 @@
   }
 
   .infoButton {
-  position: fixed;
-  bottom: 20px; /* Afstand van de onderkant van het scherm */
-  right: 20px; /* Afstand van de rechterkant van het scherm */
-  background-color: #f0a500; /* Kleur van de button */
-  border: none;
-  width: 40px; /* Breedte van de button */
-  height: 40px; /* Hoogte van de button (gelijk aan breedte voor een perfecte cirkel) */
-  font-size: 2rem; /* Grootte van het icoon binnen de button */
-  color: #ffffff;
-  border-radius: 50%; /* Maakt de button een perfecte cirkel */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  z-index: 10; /* Zorg ervoor dat de button altijd boven de andere content ligt */
-  display: flex;
-  justify-content: center;
-  align-items: center; /* Zorgt ervoor dat de inhoud van de button gecentreerd is */
-  padding: 20px;
-}
+    position: fixed;
+    bottom: 20px; /* Afstand van de onderkant van het scherm */
+    right: 20px; /* Afstand van de rechterkant van het scherm */
+    background-color: #f0a500; /* Kleur van de button */
+    border: none;
+    width: 40px; /* Breedte van de button */
+    height: 40px; /* Hoogte van de button (gelijk aan breedte voor een perfecte cirkel) */
+    font-size: 2rem; /* Grootte van het icoon binnen de button */
+    color: #ffffff;
+    border-radius: 50%; /* Maakt de button een perfecte cirkel */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 10; /* Zorg ervoor dat de button altijd boven de andere content ligt */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Zorgt ervoor dat de inhoud van de button gecentreerd is */
+    padding: 20px;
+  }
 
-.infoButton:hover {
-  background-color: #d18d00;
-}
-
-
+  .infoButton:hover {
+    background-color: #d18d00;
+  }
 </style>

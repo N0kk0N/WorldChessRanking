@@ -1,10 +1,9 @@
 <script>
   import { geoPath, geoNaturalEarth1, scaleSequential, interpolatePurples } from "d3";
-  import { fetchLeaderboardData } from "../utils/fetchDailyLeaderboard";
   import { onMount } from "svelte";
 
   export let dataset = [];
-  export let isTotalScore = false;
+  export let isTotalScore = false; // Bepaalt of totalScore of scorePerPop wordt gebruikt
   let countryData = {};
   let svgWidth, svgHeight;
   let tooltip = { visible: false, text: '', x: 0, y: 0 };
@@ -17,7 +16,22 @@
   let colorScale;
   let sortedCountries = [];
 
+  // Dynamische import
+  let fetchLeaderboardData;
+
+  async function loadLeaderboardModule(type) {
+    if (type === "daily") {
+      const module = await import("../utils/fetchDailyLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "daily960") {
+      const module = await import("../utils/fetchDaily960Leaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    }
+  }
+
   async function fetchAndUpdateData() {
+    if (!fetchLeaderboardData) return;
+
     const data = await fetchLeaderboardData();
     countryData = data.countryData;
 
@@ -37,7 +51,7 @@
       .domain([sortedCountries.length, 4]); // De schaal loopt van laagste rank naar plek 4
   }
 
-  onMount(() => {
+  onMount(async () => {
     svgWidth = window.innerWidth;
     svgHeight = window.innerHeight;
 
@@ -46,7 +60,8 @@
       .scale(scaleFactor)
       .translate([svgWidth / 2, svgHeight / 2]);
 
-    fetchAndUpdateData();
+    await loadLeaderboardModule("daily"); // Laad standaard de dagelijkse leaderboard-module
+    await fetchAndUpdateData();
   });
 
   $: if (isTotalScore !== undefined) {
@@ -59,26 +74,35 @@
   }
 
   function showTooltip(event, countryName) {
-  // Controleer of het land voorkomt in de gesorteerde lijst
-  if (sortedCountries.includes(countryName)) {
-    const count = countryData[countryName]?.count || 0;
-    const scorePerPop = (countryData[countryName]?.scorePerPop * 1000 || 0).toFixed(2);
-    const totalScore = countryData[countryName]?.totalScore || 0;
-    const rank = getRank(countryName);
-    tooltip = {
-      visible: true,
-      text: `${countryName} (Rank: ${rank}): ${isTotalScore ? `Total score: ${totalScore}` : `Average score per 1000 inhabitants: ${scorePerPop}`}`,
-      x: event.pageX,
-      y: event.pageY
-    };
+    if (sortedCountries.includes(countryName)) {
+      const count = countryData[countryName]?.count || 0;
+      const scorePerPop = (countryData[countryName]?.scorePerPop * 1000 || 0).toFixed(2);
+      const totalScore = countryData[countryName]?.totalScore || 0;
+      const rank = getRank(countryName);
+      tooltip = {
+        visible: true,
+        text: `${countryName} (Rank: ${rank}): ${isTotalScore ? `Total score: ${totalScore}` : `Average score per 1000 inhabitants: ${scorePerPop}`}`,
+        x: event.pageX,
+        y: event.pageY
+      };
+    }
   }
-}
-
 
   function hideTooltip() {
     tooltip = { visible: false, text: '', x: 0, y: 0 };
   }
+
+  async function toggleLeaderboard(type) {
+    await loadLeaderboardModule(type);
+    await fetchAndUpdateData();
+  }
 </script>
+
+<div>
+  <!-- Toggle buttons -->
+  <button on:click={() => toggleLeaderboard("daily")}>Daily Leaderboard</button>
+  <button on:click={() => toggleLeaderboard("daily960")}>Daily 960 Leaderboard</button>
+</div>
 
 <svg width="100%" height="100%" viewBox="0 0 {svgWidth} {svgHeight}">
   {#each dataset as data}
