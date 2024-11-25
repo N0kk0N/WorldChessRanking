@@ -3,10 +3,12 @@
   import { onMount } from "svelte";
 
   export let dataset = [];
-  export let isTotalScore = false; // Bepaalt of totalScore of scorePerPop wordt gebruikt
+  export let isTotalScore = false;
   let countryData = {};
   let svgWidth, svgHeight;
   let tooltip = { visible: false, text: '', x: 0, y: 0 };
+  let isMenuOpen = false;
+  let activeLeaderboard = "daily"; // Houdt bij welk leaderboard actief is
 
   const projection = geoNaturalEarth1();
   const path = geoPath(projection);
@@ -16,7 +18,6 @@
   let colorScale;
   let sortedCountries = [];
 
-  // Dynamische import
   let fetchLeaderboardData;
 
   async function loadLeaderboardModule(type) {
@@ -29,7 +30,7 @@
     } else if (type === "rapidLive") {
       const module = await import("../utils/fetchRapidLiveLeaderboard");
       fetchLeaderboardData = module.fetchLeaderboardData;
-    } 
+    }
   }
 
   async function fetchAndUpdateData() {
@@ -38,7 +39,6 @@
     const data = await fetchLeaderboardData();
     countryData = data.countryData;
 
-    // Sorteer landen afhankelijk van de toggle status
     sortedCountries = Object.entries(countryData)
       .sort((a, b) => isTotalScore
         ? b[1].totalScore - a[1].totalScore
@@ -46,12 +46,9 @@
       )
       .map(([countryName]) => countryName);
 
-    // Bepaal de top 3 landen
     topCountries = sortedCountries.slice(0, 3);
-
-    // Maak een kleurenschaal voor landen vanaf plek 4
     colorScale = scaleSequential(interpolatePurples)
-      .domain([sortedCountries.length, 4]); // De schaal loopt van laagste rank naar plek 4
+      .domain([sortedCountries.length, 4]);
   }
 
   onMount(async () => {
@@ -63,7 +60,7 @@
       .scale(scaleFactor)
       .translate([svgWidth / 2, svgHeight / 2]);
 
-    await loadLeaderboardModule("daily"); // Laad standaard de dagelijkse leaderboard-module
+    await loadLeaderboardModule("daily");
     await fetchAndUpdateData();
   });
 
@@ -98,14 +95,36 @@
   async function switchLeaderboardType(type) {
     await loadLeaderboardModule(type);
     await fetchAndUpdateData();
+    activeLeaderboard = type; // Zet de actieve leaderboard bij wijziging
+  }
+
+  function toggleMenu() {
+    isMenuOpen = !isMenuOpen;
   }
 </script>
 
-<div class="leaderboardSwitchButtons">
-  <!-- Toggle buttons -->
-  <button on:click={() => switchLeaderboardType("daily")}>Daily Leaderboard</button>
-  <button on:click={() => switchLeaderboardType("daily960")}>Daily 960 Leaderboard</button>
-  <button on:click={() => switchLeaderboardType("rapidLive")}>Rapid Live Leaderboard</button>
+<div class="menu-container">
+  <button class="menu-button" on:click={toggleMenu}>Leaderboard Options</button>
+
+  {#if isMenuOpen}
+    <div class="menu">
+      <button 
+        class="{activeLeaderboard === 'daily' ? 'active' : ''}" 
+        on:click={() => switchLeaderboardType("daily")}>
+        Daily Leaderboard
+      </button>
+      <button 
+        class="{activeLeaderboard === 'daily960' ? 'active' : ''}" 
+        on:click={() => switchLeaderboardType("daily960")}>
+        Daily 960 Leaderboard
+      </button>
+      <button 
+        class="{activeLeaderboard === 'rapidLive' ? 'active' : ''}" 
+        on:click={() => switchLeaderboardType("rapidLive")}>
+        Rapid Live Leaderboard
+      </button>
+    </div>
+  {/if}
 </div>
 
 <svg width="100%" height="100%" viewBox="0 0 {svgWidth} {svgHeight}">
@@ -156,6 +175,59 @@
 </div>
 
 <style>
+  .menu-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+  }
+
+  .menu-button {
+    padding: 10px 15px;
+    background-color: #f0a500;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+
+  .menu-button:hover {
+    background-color: #d18d00;
+  }
+
+  .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  .menu button {
+    padding: 8px 12px;
+    background-color: #f0a500;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+
+  .menu button:hover {
+    background-color: #d18d00;
+  }
+
+  .menu button.active {
+    background-color: #ff7f00; /* Kleurt de actieve knop oranje */
+  }
+
   .tooltip {
     position: absolute;
     pointer-events: none;
@@ -166,34 +238,12 @@
     font-size: 14px;
     z-index: 10;
   }
+
   .legend {
     font-size: 14px;
   }
+
   .legend div {
     margin-bottom: 5px;
-  }
-
-  .leaderboardSwitchButtons {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    gap: 100px;
-  }
-
-  .leaderboardSwitchButtons button {
-    padding: 5px 10px;
-    font-size: 1rem;
-    cursor: pointer;
-    background-color: #f0a500;
-    border: none;
-    border-radius: 5px;
-    color: #ffffff;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-  }
-
-  .leaderboardSwitchButtons button:hover {
-    background-color: #d18d00;
   }
 </style>

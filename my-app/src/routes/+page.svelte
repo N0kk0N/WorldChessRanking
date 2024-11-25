@@ -3,7 +3,6 @@
   import Map from "../components/map.svelte";
   import { json } from "d3";
   import ToggleLeaderboard from "../components/toggleLeaderboard.svelte";
-  import SwitchLeaderboard from "../components/switchLeaderboard.svelte"; // Nieuwe import
   import { writable } from 'svelte/store'; // Importeer writable
 
   let dataset = [];
@@ -22,11 +21,6 @@
   // Functie om het leaderboard te toggelen
   function toggleLeaderboard() {
     showLeaderboard = !showLeaderboard;
-  }
-
-  // Functie om het menu te toggelen
-  function toggleMenu() {
-    showMenu = !showMenu;
   }
 
   // Functie om de overlay opnieuw te openen
@@ -67,13 +61,6 @@
     aria-label="Toggle leaderboard visibility">
     {showLeaderboard ? "Hide Leaderboard" : "Show Leaderboard"}
   </button>
-  <!-- Show Menu knop aan de linkerzijde -->
-  <button 
-    class="show-menu-button"
-    on:click={toggleMenu} 
-    aria-label="Toggle menu visibility">
-    {showMenu ? "Close Menu" : "Show Menu"}
-  </button>
 </div>
 
 <!-- Kaart -->
@@ -81,9 +68,6 @@
 
 <!-- Leaderboard -->
 <ToggleLeaderboard {showLeaderboard} {toggleLeaderboard} />
-
-<!-- Menu -->
-<SwitchLeaderboard {showMenu} {toggleMenu} />
 
 <!-- Info Button -->
 <button class="infoButton" 
@@ -114,28 +98,6 @@
     justify-content: center;
     gap: 10px;
     margin-top: 20px;
-  }
-
-  /* Specifieke stijl voor de Show Menu knop */
-  .show-menu-button {
-    position: fixed;
-    left: 10px; /* Zet de knop 10px van de linkerzijde */
-    top: 110px; /* Zet de knop 20px van de bovenkant */
-    padding: 5px 10px;
-    font-size: 1rem;
-    cursor: pointer;
-    background-color: #f0a500;
-    border: none;
-    border-radius: 5px;
-    color: #ffffff;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-    z-index: 10; /* Zorgt ervoor dat de knop boven de andere elementen ligt */
-  }
-
-  .show-menu-button:hover {
-    background-color: #d18d00;
   }
 
   .button-container button {

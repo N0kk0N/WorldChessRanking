@@ -1,6 +1,7 @@
 <script>
     export let showMenu = false; // Variabele om het menu te tonen of te verbergen
     export let toggleMenu; // Functie om het menu te toggelen
+    export let switchLeaderboardType; // Functie om het leaderboard type te wisselen
 </script>
 
 {#if showMenu}
@@ -8,9 +9,10 @@
     <div class="menu">
         <button class="menu-button" on:click={toggleMenu}>Close Menu</button>
         <div class="menu-items">
-            <button>Button 1</button>
-            <button>Button 2</button>
-            <button>Button 3</button>
+            <!-- Buttons om tussen leaderboard types te wisselen -->
+            <button on:click={() => switchLeaderboardType("daily")}>Daily Leaderboard</button>
+            <button on:click={() => switchLeaderboardType("daily960")}>Daily 960 Leaderboard</button>
+            <button on:click={() => switchLeaderboardType("rapidLive")}>Rapid Live Leaderboard</button>
         </div>
     </div>
 {/if}
