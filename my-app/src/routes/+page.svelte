@@ -3,11 +3,13 @@
   import Map from "../components/map.svelte";
   import { json } from "d3";
   import ToggleLeaderboard from "../components/toggleLeaderboard.svelte";
+  import SwitchLeaderboard from "../components/switchLeaderboard.svelte"; // Nieuwe import
   import { writable } from 'svelte/store'; // Importeer writable
 
   let dataset = [];
   let isTotalScore = false; // Variabele om tussen criteria te wisselen
   let showLeaderboard = false; // Variabele om het leaderboard te tonen/verbergen
+  let showMenu = false; // Variabele om het menu te tonen/verbergen
 
   // Maak de overlay store
   let overlayVisible = writable(true);
@@ -20,6 +22,11 @@
   // Functie om het leaderboard te toggelen
   function toggleLeaderboard() {
     showLeaderboard = !showLeaderboard;
+  }
+
+  // Functie om het menu te toggelen
+  function toggleMenu() {
+    showMenu = !showMenu;
   }
 
   // Functie om de overlay opnieuw te openen
@@ -60,11 +67,12 @@
     aria-label="Toggle leaderboard visibility">
     {showLeaderboard ? "Hide Leaderboard" : "Show Leaderboard"}
   </button>
-  <!-- Button om de overlay opnieuw te openen -->
-  <button class="infoButton" 
-    on:click={openOverlay}
-    aria-label="Reopen overlay">
-    &#x24D8;
+  <!-- Show Menu knop aan de linkerzijde -->
+  <button 
+    class="show-menu-button"
+    on:click={toggleMenu} 
+    aria-label="Toggle menu visibility">
+    {showMenu ? "Close Menu" : "Show Menu"}
   </button>
 </div>
 
@@ -73,6 +81,16 @@
 
 <!-- Leaderboard -->
 <ToggleLeaderboard {showLeaderboard} {toggleLeaderboard} />
+
+<!-- Menu -->
+<SwitchLeaderboard {showMenu} {toggleMenu} />
+
+<!-- Info Button -->
+<button class="infoButton" 
+  on:click={openOverlay}
+  aria-label="Reopen overlay">
+  &#x24D8;
+</button>
 
 <style>
   :global(body) {
@@ -98,7 +116,29 @@
     margin-top: 20px;
   }
 
-  button {
+  /* Specifieke stijl voor de Show Menu knop */
+  .show-menu-button {
+    position: fixed;
+    left: 10px; /* Zet de knop 10px van de linkerzijde */
+    top: 110px; /* Zet de knop 20px van de bovenkant */
+    padding: 5px 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #f0a500;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    z-index: 10; /* Zorgt ervoor dat de knop boven de andere elementen ligt */
+  }
+
+  .show-menu-button:hover {
+    background-color: #d18d00;
+  }
+
+  .button-container button {
     padding: 5px 10px;
     font-size: 1rem;
     cursor: pointer;
@@ -111,33 +151,31 @@
     transition: background-color 0.3s ease;
   }
 
-  button:hover {
+  .button-container button:hover {
     background-color: #d18d00;
   }
 
   .infoButton {
-  position: fixed;
-  bottom: 20px; /* Afstand van de onderkant van het scherm */
-  right: 20px; /* Afstand van de rechterkant van het scherm */
-  background-color: #f0a500; /* Kleur van de button */
-  border: none;
-  width: 40px; /* Breedte van de button */
-  height: 40px; /* Hoogte van de button (gelijk aan breedte voor een perfecte cirkel) */
-  font-size: 2rem; /* Grootte van het icoon binnen de button */
-  color: #ffffff;
-  border-radius: 50%; /* Maakt de button een perfecte cirkel */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  z-index: 10; /* Zorg ervoor dat de button altijd boven de andere content ligt */
-  display: flex;
-  justify-content: center;
-  align-items: center; /* Zorgt ervoor dat de inhoud van de button gecentreerd is */
-  padding: 20px;
-}
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #f0a500;
+    border: none;
+    width: 40px;
+    height: 40px;
+    font-size: 2rem;
+    color: #ffffff;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
 
-.infoButton:hover {
-  background-color: #d18d00;
-}
-
-
+  .infoButton:hover {
+    background-color: #d18d00;
+  }
 </style>

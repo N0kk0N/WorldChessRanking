@@ -26,7 +26,10 @@
     } else if (type === "daily960") {
       const module = await import("../utils/fetchDaily960Leaderboard");
       fetchLeaderboardData = module.fetchLeaderboardData;
-    }
+    } else if (type === "rapidLive") {
+      const module = await import("../utils/fetchRapidLiveLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } 
   }
 
   async function fetchAndUpdateData() {
@@ -98,10 +101,11 @@
   }
 </script>
 
-<div>
+<div class="leaderboardSwitchButtons">
   <!-- Toggle buttons -->
   <button on:click={() => switchLeaderboardType("daily")}>Daily Leaderboard</button>
   <button on:click={() => switchLeaderboardType("daily960")}>Daily 960 Leaderboard</button>
+  <button on:click={() => switchLeaderboardType("rapidLive")}>Rapid Live Leaderboard</button>
 </div>
 
 <svg width="100%" height="100%" viewBox="0 0 {svgWidth} {svgHeight}">
@@ -167,5 +171,29 @@
   }
   .legend div {
     margin-bottom: 5px;
+  }
+
+  .leaderboardSwitchButtons {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+  }
+
+  .leaderboardSwitchButtons button {
+    padding: 5px 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #f0a500;
+    border: none;
+    border-radius: 5px;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+
+  .leaderboardSwitchButtons button:hover {
+    background-color: #d18d00;
   }
 </style>
