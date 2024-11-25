@@ -92,7 +92,7 @@
     tooltip = { visible: false, text: '', x: 0, y: 0 };
   }
 
-  async function toggleLeaderboard(type) {
+  async function switchLeaderboardType(type) {
     await loadLeaderboardModule(type);
     await fetchAndUpdateData();
   }
@@ -100,8 +100,8 @@
 
 <div>
   <!-- Toggle buttons -->
-  <button on:click={() => toggleLeaderboard("daily")}>Daily Leaderboard</button>
-  <button on:click={() => toggleLeaderboard("daily960")}>Daily 960 Leaderboard</button>
+  <button on:click={() => switchLeaderboardType("daily")}>Daily Leaderboard</button>
+  <button on:click={() => switchLeaderboardType("daily960")}>Daily 960 Leaderboard</button>
 </div>
 
 <svg width="100%" height="100%" viewBox="0 0 {svgWidth} {svgHeight}">
@@ -124,7 +124,7 @@
               )
             : 'rgba(255, 255, 255, .1)'
         }
-        stroke="#000000"
+        stroke="black"
         stroke-width="0.5"
         on:mouseover={(event) => showTooltip(event, data.properties.name)}
         on:mouseout={hideTooltip}
