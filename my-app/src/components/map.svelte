@@ -1,6 +1,7 @@
 <script>
   import { geoPath, geoNaturalEarth1, scaleSequential, interpolatePurples } from "d3";
   import { onMount } from "svelte";
+  import { slide } from "svelte/transition";
 
   export let dataset = [];
   export let isTotalScore = false;
@@ -21,34 +22,19 @@
   let fetchLeaderboardData;
 
   async function loadLeaderboardModule(type) {
-    if (type === "daily") {
-      const module = await import("../utils/fetchDailyLeaderboard");
-      fetchLeaderboardData = module.fetchLeaderboardData;
-    } else if (type === "daily960") {
-      const module = await import("../utils/fetchDaily960Leaderboard");
-      fetchLeaderboardData = module.fetchLeaderboardData;
-    } else if (type === "liveRapid") {
-      const module = await import("../utils/fetchLiveRapidLeaderboard");
-      fetchLeaderboardData = module.fetchLeaderboardData;
-    } else if (type === "liveBlitz") {
-      const module = await import("../utils/fetchLiveBlitzLeaderboard");
-      fetchLeaderboardData = module.fetchLeaderboardData;
-    } else if (type === "liveBullet") {
-      const module = await import("../utils/fetchLiveBulletLeaderboard");
-      fetchLeaderboardData = module.fetchLeaderboardData;
-    } else if (type === "liveBughouse") {
-      const module = await import("../utils/fetchLiveBughouseLeaderboard");
-      fetchLeaderboardData = module.fetchLeaderboardData;
-    } else if (type === "liveBlitz960") {
-      const module = await import("../utils/fetchLiveBlitz960Leaderboard");
-      fetchLeaderboardData = module.fetchLeaderboardData;
-    } else if (type === "liveThreecheck") {
-      const module = await import("../utils/fetchLiveThreecheckLeaderboard");
-      fetchLeaderboardData = module.fetchLeaderboardData;
-    } else if (type === "liveCrazyhouse") {
-      const module = await import("../utils/fetchLiveCrazyhouseLeaderboard");
-      fetchLeaderboardData = module.fetchLeaderboardData;
-    }
+    const moduleMap = {
+      daily: "../utils/fetchDailyLeaderboard",
+      daily960: "../utils/fetchDaily960Leaderboard",
+      liveRapid: "../utils/fetchLiveRapidLeaderboard",
+      liveBlitz: "../utils/fetchLiveBlitzLeaderboard",
+      liveBullet: "../utils/fetchLiveBulletLeaderboard",
+      liveBughouse: "../utils/fetchLiveBughouseLeaderboard",
+      liveBlitz960: "../utils/fetchLiveBlitz960Leaderboard",
+      liveThreecheck: "../utils/fetchLiveThreecheckLeaderboard",
+      liveCrazyhouse: "../utils/fetchLiveCrazyhouseLeaderboard",
+    };
+    const module = await import(moduleMap[type]);
+    fetchLeaderboardData = module.fetchLeaderboardData;
   }
 
   async function fetchAndUpdateData() {
@@ -125,7 +111,7 @@
   <button class="menu-button" on:click={toggleMenu}>Categories</button>
 
   {#if isMenuOpen}
-    <div class="menu">
+    <div class="menu" transition:slide>
       <button 
         class="{activeLeaderboard === 'daily' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("daily")}>
@@ -212,7 +198,7 @@
   </div>
 {/if}
 
-<div class="legend" style="position: absolute; bottom: 40px; left: 20px; background-color: rgba(0, 0, 0, 0.7); padding: 10px; border-radius: 5px;">
+<div class="legend" style="position: absolute; bottom: 40px; left: 20px; background-color: rgba(0, 0, 0, 0.7); padding: 10px; border-radius: 5px; font-family: 'Poppins', sans-serif;">
   <h4 style="color: white;">Top 3 countries</h4>
   {#each topCountries as country, index}
     <div style="display: flex; align-items: center; color: white;">
@@ -222,11 +208,12 @@
   {/each}
 </div>
 
+
 <style>
   .menu-container {
     position: absolute;
     top: 105px;
-    left: 10px;
+    left: 20px;
     z-index: 10;
   }
 
@@ -257,41 +244,22 @@
   }
 
   .menu button {
-    padding: 8px 12px;
-    background-color: #f0a500;
+    background-color: #333;
     color: white;
     border: none;
+    padding: 7px 10px;
     border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
     transition: background-color 0.3s ease;
   }
 
   .menu button:hover {
-    background-color: #d18d00;
+    background-color: #555;
   }
 
   .menu button.active {
-    background-color: #ff7f00; /* Kleurt de actieve knop oranje */
-  }
-
-  .tooltip {
-    position: absolute;
-    pointer-events: none;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-    font-size: 14px;
-    z-index: 10;
-  }
-
-  .legend {
-    font-size: 14px;
-  }
-
-  .legend div {
-    margin-bottom: 5px;
+    background-color: #f0a500;
   }
 </style>

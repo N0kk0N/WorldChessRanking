@@ -6,9 +6,8 @@
   import { writable } from 'svelte/store'; // Importeer writable
 
   let dataset = [];
-  let isTotalScore = false; // Variabele om tussen criteria te wisselen
+  let isTotalScore = true; // Variabele om tussen criteria te wisselen
   let showLeaderboard = false; // Variabele om het leaderboard te tonen/verbergen
-  let showMenu = false; // Variabele om het menu te tonen/verbergen
 
   // Maak de overlay store
   let overlayVisible = writable(true);
