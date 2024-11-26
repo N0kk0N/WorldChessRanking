@@ -27,8 +27,20 @@
     } else if (type === "daily960") {
       const module = await import("../utils/fetchDaily960Leaderboard");
       fetchLeaderboardData = module.fetchLeaderboardData;
-    } else if (type === "rapidLive") {
-      const module = await import("../utils/fetchRapidLiveLeaderboard");
+    } else if (type === "liveRapid") {
+      const module = await import("../utils/fetchLiveRapidLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveBlitz") {
+      const module = await import("../utils/fetchLiveBlitzLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveBullet") {
+      const module = await import("../utils/fetchLiveBulletLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveBughouse") {
+      const module = await import("../utils/fetchLiveBughouseLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveBlitz960") {
+      const module = await import("../utils/fetchLiveBlitz960Leaderboard");
       fetchLeaderboardData = module.fetchLeaderboardData;
     }
   }
@@ -104,24 +116,44 @@
 </script>
 
 <div class="menu-container">
-  <button class="menu-button" on:click={toggleMenu}>Leaderboard Options</button>
+  <button class="menu-button" on:click={toggleMenu}>Categories</button>
 
   {#if isMenuOpen}
     <div class="menu">
       <button 
         class="{activeLeaderboard === 'daily' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("daily")}>
-        Daily Leaderboard
+        Daily
       </button>
       <button 
         class="{activeLeaderboard === 'daily960' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("daily960")}>
-        Daily 960 Leaderboard
+        Daily 960
       </button>
       <button 
-        class="{activeLeaderboard === 'rapidLive' ? 'active' : ''}" 
-        on:click={() => switchLeaderboardType("rapidLive")}>
-        Rapid Live Leaderboard
+        class="{activeLeaderboard === 'liveRapid' ? 'active' : ''}" 
+        on:click={() => switchLeaderboardType("liveRapid")}>
+        Live Rapid
+      </button>
+      <button 
+        class="{activeLeaderboard === 'liveBlitz' ? 'active' : ''}" 
+        on:click={() => switchLeaderboardType("liveBlitz")}>
+        Live Blitz
+      </button>
+      <button 
+        class="{activeLeaderboard === 'liveBullet' ? 'active' : ''}" 
+        on:click={() => switchLeaderboardType("liveBullet")}>
+        Live Bullet
+      </button>
+      <button 
+        class="{activeLeaderboard === 'liveBughouse' ? 'active' : ''}" 
+        on:click={() => switchLeaderboardType("liveBughouse")}>
+        Live Bughouse
+      </button>
+      <button 
+        class="{activeLeaderboard === 'liveBlitz960' ? 'active' : ''}" 
+        on:click={() => switchLeaderboardType("liveBlitz960")}>
+        Live Blitz960
       </button>
     </div>
   {/if}
@@ -177,13 +209,13 @@
 <style>
   .menu-container {
     position: absolute;
-    top: 10px;
+    top: 105px;
     left: 10px;
     z-index: 10;
   }
 
   .menu-button {
-    padding: 10px 15px;
+    padding: 7px 10px;
     background-color: #f0a500;
     color: white;
     border: none;

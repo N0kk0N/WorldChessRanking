@@ -5,7 +5,7 @@ export async function fetchLeaderboardData() {
     async function fetchCountryName(countryUrl) {
         const response = await fetch(countryUrl);
         const countryData = await response.json();
-        const excludedLabels = ['European Union', 'International', 'Asia', 'Africa', 'North America', 'South America', 'Oceania', 'Antarctica', 'Europe', 'United Kingdom', 'Seychelles', 'Taiwan'];
+        const excludedLabels = ['European Union', 'International', 'Asia', 'Africa', 'North America', 'South America', 'Oceania', 'Antarctica', 'Europe', 'United Kingdom', 'Seychelles', 'Taiwan', 'Maldives'];
 
         if (excludedLabels.includes(countryData.name)) {
             return ''; // Laat het landveld leeg als het overeenkomt met een uitgesloten label

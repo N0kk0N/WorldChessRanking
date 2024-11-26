@@ -5,7 +5,7 @@ export async function fetchLeaderboardData() {
     async function fetchCountryName(countryUrl) {
         const response = await fetch(countryUrl);
         const countryData = await response.json();
-        const excludedLabels = ['European Union', 'International', 'Asia', 'Africa', 'North America', 'South America', 'Oceania', 'Antarctica', 'Europe', 'United Kingdom', 'Seychelles', 'Taiwan'];
+        const excludedLabels = ['European Union', 'International', 'Asia', 'Africa', 'North America', 'South America', 'Oceania', 'Antarctica', 'Europe', 'United Kingdom', 'Seychelles', 'Taiwan', 'Maldives'];
 
         if (excludedLabels.includes(countryData.name)) {
             return ''; // Laat het landveld leeg als het overeenkomt met een uitgesloten label
@@ -33,13 +33,13 @@ export async function fetchLeaderboardData() {
         return null; // Als de gegevens niet beschikbaar zijn
     }
 
+    // Haal de live blitz leaderboard gegevens op
     const response = await fetch('https://api.chess.com/pub/leaderboards');
     const data = await response.json();
 
-    // Gebruik 'live_rapid' in plaats van 'daily960'
-    if (data.live_rapid) {
+    if (data.live_blitz) {
         leaderboards = await Promise.all(
-            data.live_rapid.slice(0, 50).map(async (player) => {
+            data.live_blitz.slice(0, 50).map(async (player) => {
                 const countryName = player.country
                     ? await fetchCountryName(player.country)
                     : ''; // Zet het op een lege string als onbekend
