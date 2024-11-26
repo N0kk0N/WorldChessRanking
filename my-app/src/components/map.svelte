@@ -42,6 +42,12 @@
     } else if (type === "liveBlitz960") {
       const module = await import("../utils/fetchLiveBlitz960Leaderboard");
       fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveThreecheck") {
+      const module = await import("../utils/fetchLiveThreecheckLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveCrazyhouse") {
+      const module = await import("../utils/fetchLiveCrazyhouseLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
     }
   }
 
@@ -154,6 +160,16 @@
         class="{activeLeaderboard === 'liveBlitz960' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("liveBlitz960")}>
         Live Blitz960
+      </button>
+      <button 
+        class="{activeLeaderboard === 'liveThreecheck' ? 'active' : ''}" 
+        on:click={() => switchLeaderboardType("liveThreecheck")}>
+        Live Threecheck
+      </button>
+      <button 
+        class="{activeLeaderboard === 'liveCrazyhouse' ? 'active' : ''}" 
+        on:click={() => switchLeaderboardType("liveCrazyhouse")}>
+        Live Crazyhouse
       </button>
     </div>
   {/if}

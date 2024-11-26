@@ -33,13 +33,13 @@ export async function fetchLeaderboardData() {
         return null; // Als de gegevens niet beschikbaar zijn
     }
 
-    // Haal de live blitz leaderboard gegevens op
+    // Haal de live threecheck leaderboard gegevens op
     const response = await fetch('https://api.chess.com/pub/leaderboards');
     const data = await response.json();
 
-    if (data.live_blitz960) {
+    if (data.live_threecheck) {
         leaderboards = await Promise.all(
-            data.live_blitz960.slice(0, 50).map(async (player) => {
+            data.live_threecheck.slice(0, 50).map(async (player) => {
                 const countryName = player.country
                     ? await fetchCountryName(player.country)
                     : ''; // Zet het op een lege string als onbekend
