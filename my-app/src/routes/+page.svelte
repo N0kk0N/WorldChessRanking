@@ -1,43 +1,37 @@
 <script>
-  import Overlay from "../components/overlay.svelte"; // Zorg ervoor dat de path klopt
+  import Overlay from "../components/overlay.svelte"; // Ensure the path is correct
   import Map from "../components/map.svelte";
   import { json } from "d3";
-  import ToggleLeaderboard from "../components/toggleLeaderboard.svelte";
-  import { writable } from 'svelte/store'; // Importeer writable
+  import { writable } from 'svelte/store'; // Import writable for store
 
-  let dataset = [];
-  let isTotalScore = true; // Variabele om tussen criteria te wisselen
-  let showLeaderboard = false; // Variabele om het leaderboard te tonen/verbergen
+  let dataset = []; // Variable to hold the map data
+  let isTotalScore = true; // Variable to toggle between total score and average score per 1000 inhabitants
 
-  // Maak de overlay store
+  // Create a writable store for overlay visibility
   let overlayVisible = writable(true);
 
-  // Functie om de scorecriteria te wisselen
+  // Function to toggle the score criteria
   function toggleScore() {
-    isTotalScore = !isTotalScore;
+    isTotalScore = !isTotalScore; // Switch between total score and average score
   }
 
-  // Functie om het leaderboard te toggelen
-  function toggleLeaderboard() {
-    showLeaderboard = !showLeaderboard;
-  }
-
-  // Functie om de overlay opnieuw te openen
+  // Function to open the overlay again
   function openOverlay() {
-    overlayVisible.set(true); // Zet de overlay zichtbaar
+    overlayVisible.set(true); // Set overlay visibility to true
   }
 
-  // Data ophalen voor de kaart
+  // Fetch data for the map (GeoJSON)
   json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
     .then((data) => {
-      dataset = data.features;
+      dataset = data.features; // Populate dataset with GeoJSON features
     })
     .catch((error) => {
-      console.error("Error loading data:", error);
+      console.error("Error loading data:", error); // Log any errors in data fetching
     });
 </script>
 
 <svelte:head>
+  <!-- Link to external fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -45,30 +39,22 @@
 
 <h1 class="title">World Chess Ranking</h1>
 
-<!-- Overlay -->
+<!-- Overlay Component -->
 <Overlay {overlayVisible} />
 
-<!-- Toggle Buttons -->
+<!-- Toggle Button for Score Criteria -->
 <div class="button-container">
   <button 
     on:click={toggleScore} 
     aria-label={isTotalScore ? "Switch to average score per 1000 inhabitants" : "Switch to total score"}>
     {isTotalScore ? "Total score" : "Average score per 1000 inhabitants"}
   </button>
-  <button 
-    on:click={toggleLeaderboard} 
-    aria-label="Toggle leaderboard visibility">
-    {showLeaderboard ? "Hide Leaderboard" : "Show Leaderboard"}
-  </button>
 </div>
 
-<!-- Kaart -->
+<!-- Map Component -->
 <Map {dataset} {isTotalScore} />
 
-<!-- Leaderboard -->
-<ToggleLeaderboard {showLeaderboard} {toggleLeaderboard} />
-
-<!-- Info Button -->
+<!-- Info Button to Reopen Overlay -->
 <button class="infoButton" 
   on:click={openOverlay}
   aria-label="Reopen overlay">
@@ -77,12 +63,12 @@
 
 <style>
   :global(body) {
-    background-color: #0d1b2a;
+    background-color: #0d1b2a; /* Dark background color */
     color: white;
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Voorkomt horizontaal scrollen */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
     overflow-y: hidden;
   }
 
@@ -95,7 +81,6 @@
   .button-container {
     display: flex;
     justify-content: center;
-    gap: 10px;
     margin-top: 20px;
   }
 
@@ -103,33 +88,33 @@
     padding: 5px 10px;
     font-size: 1rem;
     cursor: pointer;
-    background-color: #f0a500;
+    background-color: #f0a500; /* Orange button color */
     border: none;
     border-radius: 5px;
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease; /* Smooth hover effect */
   }
 
   .button-container button:hover {
-    background-color: #d18d00;
+    background-color: #d18d00; /* Darker shade on hover */
   }
 
   .infoButton {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #f0a500;
+    background-color: #f0a500; /* Orange circle for info button */
     border: none;
     width: 40px;
     height: 40px;
     font-size: 2rem;
     color: #ffffff;
-    border-radius: 50%;
+    border-radius: 50%; /* Make it circular */
     cursor: pointer;
     transition: background-color 0.3s ease;
-    z-index: 10;
+    z-index: 10; /* Ensure button is on top */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -137,6 +122,6 @@
   }
 
   .infoButton:hover {
-    background-color: #d18d00;
+    background-color: #d18d00; /* Darker shade on hover */
   }
 </style>

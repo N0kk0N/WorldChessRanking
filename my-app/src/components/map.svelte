@@ -3,24 +3,26 @@
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
 
+  // Props to pass in data and state for the leaderboard type
   export let dataset = [];
   export let isTotalScore = false;
-  let countryData = {};
-  let svgWidth, svgHeight;
-  let tooltip = { visible: false, text: '', x: 0, y: 0 };
-  let isMenuOpen = false;
-  let activeLeaderboard = "daily"; // Houdt bij welk leaderboard actief is
+  let countryData = {}; // Holds the country-related data
+  let svgWidth, svgHeight; // Holds the SVG dimensions
+  let tooltip = { visible: false, text: '', x: 0, y: 0 }; // Tooltip state
+  let isMenuOpen = false; // State for the menu visibility
+  let activeLeaderboard = "daily"; // Keeps track of the active leaderboard
 
-  const projection = geoNaturalEarth1();
-  const path = geoPath(projection);
+  const projection = geoNaturalEarth1(); // Set up the map projection
+  const path = geoPath(projection); // Path generator for map data
 
-  const topColors = ['#FFD700', '#C0C0C0', '#CD7F32'];
-  let topCountries = [];
-  let colorScale;
-  let sortedCountries = [];
+  const topColors = ['#FFD700', '#C0C0C0', '#CD7F32']; // Colors for top 3 countries
+  let topCountries = []; // Holds top 3 countries by rank
+  let colorScale; // Color scale for country shading
+  let sortedCountries = []; // Sorted list of country names based on leaderboard data
 
-  let fetchLeaderboardData;
+  let fetchLeaderboardData; // Function for fetching leaderboard data
 
+  // Dynamically load leaderboard module based on type
   async function loadLeaderboardModule(type) {
     const moduleMap = {
       daily: "../utils/fetchDailyLeaderboard",
@@ -37,6 +39,7 @@
     fetchLeaderboardData = module.fetchLeaderboardData;
   }
 
+  // Fetch and update leaderboard data
   async function fetchAndUpdateData() {
     if (!fetchLeaderboardData) return;
 
@@ -50,11 +53,12 @@
       )
       .map(([countryName]) => countryName);
 
-    topCountries = sortedCountries.slice(0, 3);
+    topCountries = sortedCountries.slice(0, 3); // Extract top 3 countries
     colorScale = scaleSequential(interpolatePurples)
-      .domain([sortedCountries.length, 4]);
+      .domain([sortedCountries.length, 4]); // Create color scale based on ranking
   }
 
+  // On mount, set up projection and fetch initial leaderboard data
   onMount(async () => {
     svgWidth = window.innerWidth;
     svgHeight = window.innerHeight;
@@ -64,19 +68,22 @@
       .scale(scaleFactor)
       .translate([svgWidth / 2, svgHeight / 2]);
 
-    await loadLeaderboardModule("daily");
-    await fetchAndUpdateData();
+    await loadLeaderboardModule("daily"); // Load default leaderboard module
+    await fetchAndUpdateData(); // Fetch and update data
   });
 
+  // Reactively fetch new data when leaderboard type changes
   $: if (isTotalScore !== undefined) {
     fetchAndUpdateData();
   }
 
+  // Get the rank of a country based on the sorted list
   function getRank(countryName) {
     const rank = sortedCountries.indexOf(countryName) + 1;
     return rank;
   }
 
+  // Show the tooltip with country data when hovering over a country
   function showTooltip(event, countryName) {
     if (sortedCountries.includes(countryName)) {
       const count = countryData[countryName]?.count || 0;
@@ -92,16 +99,19 @@
     }
   }
 
+  // Hide the tooltip when the mouse moves away
   function hideTooltip() {
     tooltip = { visible: false, text: '', x: 0, y: 0 };
   }
 
+  // Switch the leaderboard type and update the data accordingly
   async function switchLeaderboardType(type) {
     await loadLeaderboardModule(type);
     await fetchAndUpdateData();
-    activeLeaderboard = type; // Zet de actieve leaderboard bij wijziging
+    activeLeaderboard = type; // Update the active leaderboard type
   }
 
+  // Toggle the menu visibility
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
   }
@@ -120,42 +130,42 @@
       <button 
         class="{activeLeaderboard === 'daily960' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("daily960")}>
-        Daily 960
+        Daily960
       </button>
       <button 
         class="{activeLeaderboard === 'liveRapid' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("liveRapid")}>
-        Live Rapid
+        Rapid
       </button>
       <button 
         class="{activeLeaderboard === 'liveBlitz' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("liveBlitz")}>
-        Live Blitz
+        Blitz
       </button>
       <button 
         class="{activeLeaderboard === 'liveBullet' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("liveBullet")}>
-        Live Bullet
+        Bullet
       </button>
       <button 
         class="{activeLeaderboard === 'liveBughouse' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("liveBughouse")}>
-        Live Bughouse
+        Bughouse
       </button>
       <button 
         class="{activeLeaderboard === 'liveBlitz960' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("liveBlitz960")}>
-        Live Blitz960
+       Blitz960
       </button>
       <button 
         class="{activeLeaderboard === 'liveThreecheck' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("liveThreecheck")}>
-        Live Threecheck
+        Threecheck
       </button>
       <button 
         class="{activeLeaderboard === 'liveCrazyhouse' ? 'active' : ''}" 
         on:click={() => switchLeaderboardType("liveCrazyhouse")}>
-        Live Crazyhouse
+        Crazyhouse
       </button>
     </div>
   {/if}
