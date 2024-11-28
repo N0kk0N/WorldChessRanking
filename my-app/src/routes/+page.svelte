@@ -1,10 +1,9 @@
 <script>
   import Overlay from "../components/overlay.svelte"; // Ensure the path is correct
   import Map from "../components/map.svelte";
-  import { json } from "d3";
   import { writable } from 'svelte/store'; // Import writable for store
 
-  let dataset = []; // Variable to hold the map data
+  let dataset = []; // Variable for the map data
   let isTotalScore = true; // Variable to toggle between total score and average score per 1000 inhabitants
 
   // Create a writable store for overlay visibility
@@ -12,22 +11,30 @@
 
   // Function to toggle the score criteria
   function toggleScore() {
-    isTotalScore = !isTotalScore; // Switch between total score and average score
+    isTotalScore = !isTotalScore; // Toggle between total score and average score
   }
 
-  // Function to open the overlay again
+  // Function to reopen the overlay
   function openOverlay() {
     overlayVisible.set(true); // Set overlay visibility to true
   }
 
-  // Fetch data for the map (GeoJSON)
-  json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
-    .then((data) => {
-      dataset = data.features; // Populate dataset with GeoJSON features
-    })
-    .catch((error) => {
-      console.error("Error loading data:", error); // Log any errors in data fetching
-    });
+  // Fetch the GeoJSON data
+  async function fetchGeoData() {
+    try {
+      const response = await fetch("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
+      const data = await response.json();
+      dataset = data.features; // Populate the dataset with GeoJSON features
+    } catch (error) {
+      console.error("Error loading data:", error); // Log any errors when fetching data
+    }
+  }
+
+  // Fetch the GeoJSON data when the component is mounted
+  import { onMount } from 'svelte';
+  onMount(() => {
+    fetchGeoData(); // Load the GeoJSON data when the component mounts
+  });
 </script>
 
 <svelte:head>
@@ -94,7 +101,7 @@
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    transition: background-color 0.3s ease; /* Smooth hover effect */
+    transition: background-color 0.3s ease; /* Fade effect on hover */
   }
 
   .button-container button:hover {
@@ -114,7 +121,7 @@
     border-radius: 50%; /* Make it circular */
     cursor: pointer;
     transition: background-color 0.3s ease;
-    z-index: 10; /* Ensure button is on top */
+    z-index: 10; /* Ensure the button is on top */
     display: flex;
     justify-content: center;
     align-items: center;
