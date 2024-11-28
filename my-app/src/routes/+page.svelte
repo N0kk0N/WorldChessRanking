@@ -1,37 +1,44 @@
 <script>
-  import Overlay from "../components/overlay.svelte"; // Ensure the path is correct
+  import Overlay from "../components/overlay.svelte"; // Zorg ervoor dat het pad klopt
   import Map from "../components/map.svelte";
-  import { json } from "d3";
-  import { writable } from 'svelte/store'; // Import writable for store
+  import { writable } from 'svelte/store'; // Import writable voor store
 
-  let dataset = []; // Variable to hold the map data
-  let isTotalScore = true; // Variable to toggle between total score and average score per 1000 inhabitants
+  let dataset = []; // Variabele voor de map data
+  let isTotalScore = true; // Variabele om tussen totale score en gemiddelde score per 1000 inwoners te schakelen
 
-  // Create a writable store for overlay visibility
+  // Maak een writable store voor overlay zichtbaarheid
   let overlayVisible = writable(true);
 
-  // Function to toggle the score criteria
+  // Functie om het scorecriterium om te schakelen
   function toggleScore() {
-    isTotalScore = !isTotalScore; // Switch between total score and average score
+    isTotalScore = !isTotalScore; // Wissel tussen totale score en gemiddelde score
   }
 
-  // Function to open the overlay again
+  // Functie om de overlay weer te openen
   function openOverlay() {
-    overlayVisible.set(true); // Set overlay visibility to true
+    overlayVisible.set(true); // Zet overlay zichtbaarheid naar true
   }
 
-  // Fetch data for the map (GeoJSON)
-  json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
-    .then((data) => {
-      dataset = data.features; // Populate dataset with GeoJSON features
-    })
-    .catch((error) => {
-      console.error("Error loading data:", error); // Log any errors in data fetching
-    });
+  // Haal de GeoJSON data op
+  async function fetchGeoData() {
+    try {
+      const response = await fetch("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson");
+      const data = await response.json();
+      dataset = data.features; // Vul de dataset met GeoJSON features
+    } catch (error) {
+      console.error("Error loading data:", error); // Log eventuele fouten tijdens het ophalen van data
+    }
+  }
+
+  // Haal de GeoJSON data op wanneer de component geladen wordt
+  import { onMount } from 'svelte';
+  onMount(() => {
+    fetchGeoData(); // Laad de GeoJSON data bij het monteren van de component
+  });
 </script>
 
 <svelte:head>
-  <!-- Link to external fonts -->
+  <!-- Link naar externe fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -42,7 +49,7 @@
 <!-- Overlay Component -->
 <Overlay {overlayVisible} />
 
-<!-- Toggle Button for Score Criteria -->
+<!-- Toggle Button voor Score Criteria -->
 <div class="button-container">
   <button 
     on:click={toggleScore} 
@@ -54,7 +61,7 @@
 <!-- Map Component -->
 <Map {dataset} {isTotalScore} />
 
-<!-- Info Button to Reopen Overlay -->
+<!-- Info Button om Overlay te heropenen -->
 <button class="infoButton" 
   on:click={openOverlay}
   aria-label="Reopen overlay">
@@ -63,12 +70,12 @@
 
 <style>
   :global(body) {
-    background-color: #0d1b2a; /* Dark background color */
+    background-color: #0d1b2a; /* Donkere achtergrondkleur */
     color: white;
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden; /* Voorkom horizontaal scrollen */
     overflow-y: hidden;
   }
 
@@ -88,33 +95,33 @@
     padding: 5px 10px;
     font-size: 1rem;
     cursor: pointer;
-    background-color: #f0a500; /* Orange button color */
+    background-color: #f0a500; /* Oranje knop kleur */
     border: none;
     border-radius: 5px;
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    transition: background-color 0.3s ease; /* Smooth hover effect */
+    transition: background-color 0.3s ease; /* Vervagen op hover */
   }
 
   .button-container button:hover {
-    background-color: #d18d00; /* Darker shade on hover */
+    background-color: #d18d00; /* Donkere schaduw bij hover */
   }
 
   .infoButton {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #f0a500; /* Orange circle for info button */
+    background-color: #f0a500; /* Oranje cirkel voor info-knop */
     border: none;
     width: 40px;
     height: 40px;
     font-size: 2rem;
     color: #ffffff;
-    border-radius: 50%; /* Make it circular */
+    border-radius: 50%; /* Maak het cirkelvormig */
     cursor: pointer;
     transition: background-color 0.3s ease;
-    z-index: 10; /* Ensure button is on top */
+    z-index: 10; /* Zorg ervoor dat de knop bovenop ligt */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -122,6 +129,6 @@
   }
 
   .infoButton:hover {
-    background-color: #d18d00; /* Darker shade on hover */
+    background-color: #d18d00; /* Donkere schaduw bij hover */
   }
 </style>
