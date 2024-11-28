@@ -23,20 +23,36 @@
   let fetchLeaderboardData; // Function for fetching leaderboard data
 
   // Dynamically load leaderboard module based on type
+  // Dynamically load leaderboard module based on type (using if-else)
   async function loadLeaderboardModule(type) {
-    const moduleMap = {
-      daily: "../utils/fetchDailyLeaderboard",
-      daily960: "../utils/fetchDaily960Leaderboard",
-      liveRapid: "../utils/fetchLiveRapidLeaderboard",
-      liveBlitz: "../utils/fetchLiveBlitzLeaderboard",
-      liveBullet: "../utils/fetchLiveBulletLeaderboard",
-      liveBughouse: "../utils/fetchLiveBughouseLeaderboard",
-      liveBlitz960: "../utils/fetchLiveBlitz960Leaderboard",
-      liveThreecheck: "../utils/fetchLiveThreecheckLeaderboard",
-      liveCrazyhouse: "../utils/fetchLiveCrazyhouseLeaderboard",
-    };
-    const module = await import(moduleMap[type]);
-    fetchLeaderboardData = module.fetchLeaderboardData;
+    if (type === "daily") {
+      const module = await import("../utils/fetchDailyLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "daily960") {
+      const module = await import("../utils/fetchDaily960Leaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveRapid") {
+      const module = await import("../utils/fetchLiveRapidLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveBlitz") {
+      const module = await import("../utils/fetchLiveBlitzLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveBullet") {
+      const module = await import("../utils/fetchLiveBulletLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveBughouse") {
+      const module = await import("../utils/fetchLiveBughouseLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveBlitz960") {
+      const module = await import("../utils/fetchLiveBlitz960Leaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveThreecheck") {
+      const module = await import("../utils/fetchLiveThreecheckLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    } else if (type === "liveCrazyhouse") {
+      const module = await import("../utils/fetchLiveCrazyhouseLeaderboard");
+      fetchLeaderboardData = module.fetchLeaderboardData;
+    }
   }
 
   // Fetch and update leaderboard data
