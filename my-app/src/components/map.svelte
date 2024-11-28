@@ -22,7 +22,6 @@
 
   let fetchLeaderboardData; // Function for fetching leaderboard data
 
-  // Dynamically load leaderboard module based on type
   // Dynamically load leaderboard module based on type (using if-else)
   async function loadLeaderboardModule(type) {
     if (type === "daily") {
